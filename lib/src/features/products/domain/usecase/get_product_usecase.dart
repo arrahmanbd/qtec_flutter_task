@@ -12,3 +12,5 @@ class GetProductUsecase implements UseCase<DataState<List<Product>>, void> {
     return productRepository.getProducts();
   }
 }
+
+

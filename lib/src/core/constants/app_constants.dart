@@ -1,2 +1,2 @@
 const String baseURL = 'https://fakestoreapi.com';
-const String productsEndpoint = '/products';
+const String productsEndpoint = 'products';
