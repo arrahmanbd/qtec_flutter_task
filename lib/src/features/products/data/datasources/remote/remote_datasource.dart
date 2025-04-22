@@ -3,13 +3,13 @@ import 'package:qtec_flutter_task/src/features/products/data/models/product_mode
 import 'package:retrofit/retrofit.dart';
 import 'package:qtec_flutter_task/src/core/constants/app_constants.dart';
 
-part 'product_client.g.dart'; 
+part 'remote_datasource.g.dart'; 
 
 
 @RestApi(baseUrl: baseURL)
-abstract class ProductClient {
-  factory ProductClient(Dio dio, {String baseUrl}) = _ProductClient;
+abstract class RemoteDataSource {
+  factory RemoteDataSource(Dio dio, {String baseUrl}) = _RemoteDataSource;
 
   @GET(productsEndpoint)
-  Future<List<ProductModel>> getProducts();
+  Future<HttpResponse<List<ProductModel>>> getProducts();
 }

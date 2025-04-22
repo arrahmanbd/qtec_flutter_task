@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'product_client.dart';
+part of 'remote_datasource.dart';
 
 // **************************************************************************
 // RetrofitGenerator
@@ -8,8 +8,8 @@ part of 'product_client.dart';
 
 // ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers,unused_element,unnecessary_string_interpolations
 
-class _ProductClient implements ProductClient {
-  _ProductClient(this._dio, {this.baseUrl, this.errorLogger}) {
+class _RemoteDataSource implements RemoteDataSource {
+  _RemoteDataSource(this._dio, {this.baseUrl, this.errorLogger}) {
     baseUrl ??= 'https://fakestoreapi.com';
   }
 
@@ -20,12 +20,12 @@ class _ProductClient implements ProductClient {
   final ParseErrorLogger? errorLogger;
 
   @override
-  Future<List<ProductModel>> getProducts() async {
+  Future<HttpResponse<List<ProductModel>>> getProducts() async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<List<ProductModel>>(
+    final _options = _setStreamType<HttpResponse<List<ProductModel>>>(
       Options(method: 'GET', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
@@ -48,7 +48,8 @@ class _ProductClient implements ProductClient {
       errorLogger?.logError(e, s, _options);
       rethrow;
     }
-    return _value;
+    final httpResponse = HttpResponse(_value, _result);
+    return httpResponse;
   }
 
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {
