@@ -12,7 +12,6 @@ Future<void> initializeDependencies() async {
  
   // Dio
   sl.registerSingleton<Dio>(Dio());
-
   // Dependencies
   sl.registerSingleton<RemoteDataSource>(RemoteDataSource(sl()));
   sl.registerSingleton<LocalCache>(LocalCache());
