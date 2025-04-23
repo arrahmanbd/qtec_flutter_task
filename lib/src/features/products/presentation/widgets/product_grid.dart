@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_addons/flutter_addons.dart';
+import 'package:qtec_flutter_task/src/core/components/circle_icon.dart';
 import 'package:qtec_flutter_task/src/features/products/data/models/product_model.dart';
 
 import 'package:qtec_flutter_task/src/features/products/domain/entities/product.dart';
@@ -52,13 +53,14 @@ class _ProductCard extends StatelessWidget {
 
     return Material(
       color: AppColors.backgroundColor,
-      borderRadius: BorderRadius.circular(12.r),
+      
       elevation: 0,
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () {},
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: 8.h,
           children: [
             // Product Image
             SizedBox(
@@ -144,7 +146,7 @@ class _ProductCard extends StatelessWidget {
                         style: TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: 10.sp,
-                          color: AppColors.secondaryColor,
+                          color: const Color(0xFFEA580C),
                         ),
                       ),
                     ],
@@ -165,7 +167,7 @@ class _ProductCard extends StatelessWidget {
                         child: Container(
                           padding: const EdgeInsets.all(2),
                           decoration: BoxDecoration(
-                            color: AppColors.primaryColor,
+                            color: AppColors.secondaryColor,
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: const Icon(
@@ -190,7 +192,7 @@ class _ProductCard extends StatelessWidget {
                         style: TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: 12.sp,
-                          color: AppColors.outline,
+                          color: AppColors.iconColor,
                         ),
                       ),
                     ],
@@ -199,6 +201,25 @@ class _ProductCard extends StatelessWidget {
           ],
         ),
       ),
+    ).stackWith(
+      children: [
+        Positioned(
+          top: 4.h,
+          right: 12.w,
+          child: CircularIconButton(
+            icon: Icons.favorite_border,
+            //iconPath: 'assets/svgs/heart.svg',
+            onPressed: () {},
+            iconSize: 16,
+            size: 24.sp,
+            backgroundColor: Colors.white,
+            iconColor: AppColors.iconColor,
+            elevation: 0,
+            padding: 0,
+            blur: true,
+          ),
+        ),
+      ]
     );
   }
 }

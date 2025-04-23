@@ -104,19 +104,23 @@ class _CustomSearchFieldState extends State<CustomSearchField> {
                 decoration: BoxDecoration(
                   color: AppColors.backgroundColor,
                   borderRadius: BorderRadius.circular(8.r),
-                  border: Border.all(color: AppColors.greyColor, width: 1),
+                  border: Border.all(color: AppColors.outline, width: 1),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.center,
+                  spacing: 12.w,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(left: 4.0),
+                      padding:14.pl,
                       child: CircularIconButton(
                         onPressed: () {
                           widget.onLeading?.call();
                         },
                         iconPath: widget.icon,
+                        size: 24.sp,
+                        padding: 0,
+                        iconSize: 24,
                       ),
                     ),
                     Expanded(
@@ -153,6 +157,7 @@ class _CustomSearchFieldState extends State<CustomSearchField> {
                     iconPath: 'assets/svgs/sort.svg',
                     size: 48.sp,
                     padding: 0,
+                    iconSize: 48,
                   ),
                 ),
               ),
