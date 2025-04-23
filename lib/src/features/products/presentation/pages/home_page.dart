@@ -62,7 +62,7 @@ class HomePage extends StatelessWidget {
           }
 
           if (state is ProductLoaded) {
-            return ProductGrid(products: state.products,isLoading: true,);
+            return ProductGrid(products: state.products, isLoading: true);
           }
 
           return const Center(child: Text('No products found'));

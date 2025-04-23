@@ -49,6 +49,7 @@ class _ProductCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isLoading = Skeletonizer.of(context).enabled;
+    
     return Material(
       color: AppColors.backgroundColor,
       borderRadius: BorderRadius.circular(12.r),
@@ -58,137 +59,161 @@ class _ProductCard extends StatelessWidget {
         onTap: () {},
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: 8.h,
           children: [
+            // Product Image
             SizedBox(
               width: 156.w,
               height: 164.h,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(4.r),
-                child: CachedNetworkImage(
-                  imageUrl: product.image,
-                  fit: BoxFit.cover,
-                  width: 156.w,
-                  height: 164.h,
-                  placeholder:
-                      (context, url) => Container(
-                        color: AppColors.greyColor,
-                        child: const Center(
-                          child: CupertinoActivityIndicator(),
+                child: isLoading
+                    ? const SkeletonLoader(width: 156, height: 164)
+                    : CachedNetworkImage(
+                        imageUrl: product.image,
+                        fit: BoxFit.cover,
+                        width: 156.w,
+                        height: 164.h,
+                        placeholder: (context, url) => Container(
+                          color: AppColors.greyColor,
+                          child: const Center(
+                            child: CupertinoActivityIndicator(),
+                          ),
                         ),
-                      ),
-                  errorWidget:
-                      (context, url, error) => Container(
-                        color: AppColors.greyColor,
-                        child: const Center(
-                          child: Icon(
-                            Icons.broken_image,
-                            color: AppColors.textPrimary,
+                        errorWidget: (context, url, error) => Container(
+                          color: AppColors.greyColor,
+                          child: const Center(
+                            child: Icon(
+                              Icons.broken_image,
+                              color: AppColors.textPrimary,
+                            ),
                           ),
                         ),
                       ),
-                ),
               ),
             ),
+
+            // Product Title
             SizedBox(
               height: 36.h,
-              child: Text(
-                product.title,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: context.bodySmall.copyWith(fontSize: 12.sp),
-              ),
+              child: isLoading
+                  ? const SkeletonLoader(width: 120, height: 16)
+                  : Text(
+                      product.title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: context.bodySmall.copyWith(fontSize: 12.sp),
+                    ),
             ),
-            RichText(
-              text: TextSpan(
-                style: Theme.of(
-                  context,
-                ).textTheme.titleSmall?.copyWith(fontSize: 14.sp),
-                children: [
-                  TextSpan(
-                    text: product.price.toDollar(),
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
-                      fontSize: 14.sp,
-                    ),
-                  ),
-                  WidgetSpan(child: 4.s),
-                  TextSpan(
-                    text: (product.price + 20).toDollar(),
-                    style: TextStyle(
-                      decoration: TextDecoration.lineThrough,
-                      color: AppColors.greyColor,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 10.sp,
-                    ),
-                  ),
-                  WidgetSpan(child: 4.s),
-                  TextSpan(
-                    text: '25% OFF',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 10.sp,
-                      color: AppColors.secondaryColor,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            RichText(
-              text: TextSpan(
-                style: Theme.of(
-                  context,
-                ).textTheme.titleSmall?.copyWith(fontSize: 14.sp),
-                children: [
-                  // fix the loading state skeleton
-                  if (isLoading)
-                    WidgetSpan(
-                      alignment: PlaceholderAlignment.middle,
-                      child: SizedBox(),
-                    )
-                  else
-                    WidgetSpan(
-                      alignment: PlaceholderAlignment.middle,
-                      child: Container(
-                        padding: const EdgeInsets.all(2),
-                        decoration: BoxDecoration(
-                          color: AppColors.primaryColor,
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: const Icon(
-                          Icons.star,
-                          size: 16,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
 
-                  const WidgetSpan(child: SizedBox(width: 4)),
-                  TextSpan(
-                    text: '4.3 ',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
-                      fontSize: 12.sp,
+            // Price and Discount
+            isLoading
+                ? const SkeletonLoader(width: 150, height: 16)
+                : RichText(
+                    text: TextSpan(
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                            fontSize: 14.sp,
+                          ),
+                      children: [
+                        TextSpan(
+                          text: product.price.toDollar(),
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textPrimary,
+                            fontSize: 14.sp,
+                          ),
+                        ),
+                        WidgetSpan(child: 4.s),
+                        TextSpan(
+                          text: (product.price + 20).toDollar(),
+                          style: TextStyle(
+                            decoration: TextDecoration.lineThrough,
+                            color: AppColors.greyColor,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 10.sp,
+                          ),
+                        ),
+                        WidgetSpan(child: 4.s),
+                        TextSpan(
+                          text: '25% OFF',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 10.sp,
+                            color: AppColors.secondaryColor,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
 
-                  const WidgetSpan(child: SizedBox(width: 4)),
-                  TextSpan(
-                    text: '(646)',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 12.sp,
-                      color: AppColors.outline,
+            // Rating Section
+            isLoading
+                ? const SkeletonLoader(width: 120, height: 16)
+                : RichText(
+                    text: TextSpan(
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                            fontSize: 14.sp,
+                          ),
+                      children: [
+                        WidgetSpan(
+                          alignment: PlaceholderAlignment.middle,
+                          child: Container(
+                            padding: const EdgeInsets.all(2),
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryColor,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: const Icon(
+                              Icons.star,
+                              size: 16,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                        const WidgetSpan(child: SizedBox(width: 4)),
+                        TextSpan(
+                          text: '4.3 ',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textPrimary,
+                            fontSize: 12.sp,
+                          ),
+                        ),
+                        const WidgetSpan(child: SizedBox(width: 4)),
+                        TextSpan(
+                          text: '(646)',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 12.sp,
+                            color: AppColors.outline,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-            ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class SkeletonLoader extends StatelessWidget {
+  final double width;
+  final double height;
+
+  const SkeletonLoader({
+    super.key,
+    required this.width,
+    required this.height,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: width,
+      height: height,
+      color: AppColors.greyColor,
+      margin: 4.p,
     );
   }
 }

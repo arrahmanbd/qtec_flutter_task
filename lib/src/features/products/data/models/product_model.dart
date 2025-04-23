@@ -22,6 +22,10 @@ class ProductModel extends Product {
     'image': image,
   };
 
-  factory ProductModel.fake() =>
-      ProductModel(id: 0, title: '', image: '', price: 0.0);
+  factory ProductModel.fake() => ProductModel(
+    id: 1,
+    title: 'Fake Product',
+    image: 'https://placehold.co/600x400/png',
+    price: 99.99,
+  );
 }
