@@ -11,16 +11,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: ProductLayout(),
-      floatingActionButton: Consumer(
-        builder: (context, ref, child) {
-          return FloatingActionButton(
-            onPressed: () {
-              context.to(const SearchPage());
-            },
-            child: const Icon(Icons.refresh),
-          );
-        },
-      ),
+     
     );
   }
 }

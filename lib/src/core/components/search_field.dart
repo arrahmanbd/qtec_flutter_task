@@ -89,7 +89,7 @@ class _CustomSearchFieldState extends State<CustomSearchField> {
       child: ConstrainedBox(
         constraints: BoxConstraints(minHeight: 48.h, maxHeight: 48.h),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Expanded(
@@ -138,7 +138,7 @@ class _CustomSearchFieldState extends State<CustomSearchField> {
             ),
             if (widget.showTrailing)
               Container(
-                padding: 2.pl,
+                padding: 8.pl,
                 child: Center(
                   child: CircularIconButton(
                     onPressed: () {
@@ -146,6 +146,7 @@ class _CustomSearchFieldState extends State<CustomSearchField> {
                     },
                     iconPath: 'assets/svgs/sort.svg',
                     size: 48.sp,
+                    padding: 0,
                   ),
                 ),
               ),

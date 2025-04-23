@@ -9,16 +9,19 @@ class ProductModel extends Product {
   });
 
   factory ProductModel.fromJson(Map<String, dynamic> json) => ProductModel(
-        id: json['id'],
-        title: json['title'],
-        price: (json['price'] as num).toDouble(),
-        image: json['image'],
-      );
+    id: json['id'],
+    title: json['title'],
+    price: (json['price'] as num).toDouble(),
+    image: json['image'],
+  );
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'title': title,
-        'price': price,
-        'image': image,
-      };
+    'id': id,
+    'title': title,
+    'price': price,
+    'image': image,
+  };
+
+  factory ProductModel.fake() =>
+      ProductModel(id: 0, title: '', image: '', price: 0.0);
 }

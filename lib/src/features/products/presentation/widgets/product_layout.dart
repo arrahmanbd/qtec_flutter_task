@@ -38,8 +38,8 @@ class ProductLayout extends ConsumerWidget {
             child:
                 productState is ProductLoaded
                     ? ProductGrid(products: productState.products)
-                    : const Center(child: CircularProgressIndicator()),
-          ),
+                    : ProductGrid(products: productState.products, isLoading: true),),
+          
         ],
       ),
     );

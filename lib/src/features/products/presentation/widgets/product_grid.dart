@@ -1,29 +1,35 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter_addons/flutter_addons.dart';
+
 import 'package:qtec_flutter_task/src/features/products/domain/entities/product.dart';
 import 'package:qtec_flutter_task/src/shared/theme/app_colors.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 class ProductGrid extends StatelessWidget {
   final List<Product> products;
-
-  const ProductGrid({super.key, required this.products});
+  final bool isLoading;
+  const ProductGrid({super.key, required this.products, this.isLoading = false});
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      padding: 0.p,
-      itemCount: products.length,
-      physics: const BouncingScrollPhysics(),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisExtent: 264.h,
-        mainAxisSpacing: 24.h,
-        crossAxisSpacing: 16.w,
+    return Skeletonizer(
+      enabled: isLoading,
+      child: GridView.builder(
+        padding: 0.p,
+        itemCount: isLoading ? 6 : products.length,
+        physics: const BouncingScrollPhysics(),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          mainAxisExtent: 264.h,
+          mainAxisSpacing: 24.h,
+          crossAxisSpacing: 16.w,
+        ),
+        itemBuilder: (context, index) {
+          final product = products[index];
+          return _ProductCard(product: product);
+        },
       ),
-      itemBuilder: (context, index) {
-        final product = products[index];
-        return _ProductCard(product: product);
-      },
     );
   }
 }
