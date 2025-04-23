@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_addons/flutter_addons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qtec_flutter_task/src/core/resources/data_state.dart';
 import 'package:qtec_flutter_task/src/features/products/domain/entities/product.dart';
@@ -6,7 +7,6 @@ import 'package:qtec_flutter_task/src/features/products/domain/usecase/get_produ
 import 'package:qtec_flutter_task/src/features/products/presentation/riverpod/product_state.dart';
 import 'package:qtec_flutter_task/src/service_locator.dart';
 import 'package:qtec_flutter_task/src/shared/utils/product_filter_utils.dart';
-import 'package:qtec_flutter_task/src/shared/utils/sort_order.dart';
 
 final productProvider = StateNotifierProvider<ProductNotifier, ProductState>(
   (ref) => ProductNotifier(sl<GetProductUsecase>()),
@@ -15,55 +15,100 @@ final productProvider = StateNotifierProvider<ProductNotifier, ProductState>(
 class ProductNotifier extends StateNotifier<ProductState> {
   final GetProductUsecase getProductUsecase;
 
-  List<Product> _allProducts = [];
-  List<Product> _displayedProducts = [];
+  int _page = 0;
+  final int _pageSize = 10;
 
-  SortOrder _currentSort = SortOrder.lowToHigh;
+  List<Product> _allProducts = [];
+  SortOrder _currentSort = SortOrder.priceLowToHigh;
   String _currentQuery = '';
 
-  ProductNotifier(this.getProductUsecase) : super(ProductLoading()) {
-    fetchProducts();
+  ProductNotifier(this.getProductUsecase) : super(const ProductState()) {
+    fetchInitialProducts();
   }
 
-  Future<void> fetchProducts() async {
+  // Initial fetch of products
+  Future<void> fetchInitialProducts() async {
+    state = state.copyWith(isLoading: true, error: null);
+    _page = 0; // Reset to page 0 when fetching initial products.
+    _allProducts.clear();
+
     try {
       final result = await getProductUsecase();
       if (result is DataSuccess && result.data != null) {
         _allProducts = result.data!;
+        _page = 1;
         _applyFilters();
       } else {
-        state = ProductError(result.error!);
+        state = state.copyWith(isLoading: false, error: result.error);
       }
     } catch (e) {
-      state = ProductError(e as DioException);
+      state = state.copyWith(isLoading: false, error: e as DioException);
     }
   }
 
+  // Load more products for pagination
+  Future<bool> loadMore() async {
+    
+    if (state.isLoadingMore || state.isFinished) return true;
+
+    state = state.copyWith(isLoadingMore: true);
+    await Future.delayed(
+      const Duration(milliseconds: 800),
+    ); // Simulating network delay
+
+    // Increment the page to load the next set of products
+    _page++;
+    dbug('Load more products for page $_page');
+    _applyFilters();
+    return false;
+  }
+
+  // Apply filters and pagination to the products list
+  void _applyFilters() {
+    var filtered = ProductFilterUtils.search(_allProducts, _currentQuery);
+    var sorted = ProductFilterUtils.sort(filtered, _currentSort);
+
+    // Paginate based on the current page and page size
+    var paginated = sorted.take(_page * _pageSize).toList();
+
+    state = state.copyWith(
+      products: paginated,
+      isLoading: false,
+      isRefreshing: false,
+      isLoadingMore: false,
+      isFinished:
+          paginated.length >= sorted.length, // Check if all products are loaded
+    );
+  }
+
+  // Refresh the product list
+  Future<void> refresh() async {
+    state = state.copyWith(isRefreshing: true, products: []);
+
+    await Future.delayed(
+      const Duration(milliseconds: 800),
+    ); // Simulate refresh delay
+    _page = 1; // Reset page on refresh
+    fetchInitialProducts();
+    clearFilters() ; // Reapply filters after refresh
+  }
+
+  // Search functionality
   void search(String query) {
     _currentQuery = query;
     _applyFilters();
   }
 
+  // Sort functionality
   void sort(SortOrder order) {
     _currentSort = order;
     _applyFilters();
   }
 
-  void resetFilters() {
+  // Clear filters
+  void clearFilters() {
     _currentQuery = '';
-    _currentSort = SortOrder.lowToHigh;
+    _currentSort = SortOrder.idAsc;
     _applyFilters();
-  }
-
-  void clearSearch() {
-    _currentQuery = '';
-    _applyFilters();
-  }
-
-  void _applyFilters() {
-    var filtered = ProductFilterUtils.search(_allProducts, _currentQuery);
-    var sorted = ProductFilterUtils.sort(filtered, _currentSort);
-    _displayedProducts = sorted;
-    state = ProductLoaded(_displayedProducts);
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter_addons/flutter_addons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qtec_flutter_task/src/features/products/presentation/pages/home_page.dart';
 import 'package:qtec_flutter_task/src/service_locator.dart';
+import 'package:qtec_flutter_task/src/shared/global/net_check.dart';
 import 'package:qtec_flutter_task/src/shared/theme/app_theme.dart';
 
 Future<void> main() async {

@@ -1,4 +1,0 @@
-enum SortOrder {
-  lowToHigh,
-  highToLow,
-}

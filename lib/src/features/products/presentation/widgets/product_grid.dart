@@ -24,9 +24,9 @@ class ProductGrid extends StatelessWidget {
     return Skeletonizer(
       enabled: isLoading,
       child: GridView.builder(
-        padding: 16.pt, // included 8 on header
+        padding: EdgeInsets.symmetric(vertical: 16.h), // included 8 on header
         itemCount: isLoading ? 10 : products.length,
-        physics: const BouncingScrollPhysics(),
+        physics: const AlwaysScrollableScrollPhysics(),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           mainAxisExtent: 264.h,
@@ -102,7 +102,7 @@ class _ProductCard extends StatelessWidget {
               height: 36.h,
               child:
                   isLoading
-                      ? const SkeletonLoader(width: 120, height: 16)
+                      ? const SkeletonLoader(width: 120, height: 8)
                       : Text(
                         product.title,
                         maxLines: 2,
@@ -113,7 +113,7 @@ class _ProductCard extends StatelessWidget {
 
             // Price and Discount
             isLoading
-                ? const SkeletonLoader(width: 150, height: 16)
+                ? const SkeletonLoader(width: 150, height: 8)
                 : RichText(
                   text: TextSpan(
                     style: Theme.of(
@@ -155,7 +155,7 @@ class _ProductCard extends StatelessWidget {
 
             // Rating Section
             isLoading
-                ? const SkeletonLoader(width: 120, height: 16)
+                ? const SkeletonLoader(width: 120, height: 10)
                 : RichText(
                   text: TextSpan(
                     style: Theme.of(
@@ -212,7 +212,9 @@ class _ProductCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (true) OutOfStockBadge(),
+                true && !isLoading
+                    ? OutOfStockBadge()
+                    : SkeletonLoader(width: 40, height: 8),
                 CircularIconButton(
                   //icon: Icons.favorite_border,
                   iconPath: 'assets/svgs/heart.svg',

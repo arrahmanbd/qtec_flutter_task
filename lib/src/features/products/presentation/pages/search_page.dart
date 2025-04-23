@@ -5,8 +5,9 @@ import 'package:qtec_flutter_task/src/core/components/search_field.dart';
 import 'package:qtec_flutter_task/src/features/products/presentation/riverpod/product_provider.dart';
 import 'package:qtec_flutter_task/src/features/products/presentation/riverpod/product_state.dart';
 import 'package:qtec_flutter_task/src/features/products/presentation/widgets/product_grid.dart';
+import 'package:qtec_flutter_task/src/features/products/presentation/widgets/product_section.dart';
 import 'package:qtec_flutter_task/src/shared/theme/app_colors.dart';
-import 'package:qtec_flutter_task/src/shared/utils/sort_order.dart';
+import 'package:qtec_flutter_task/src/shared/utils/product_filter_utils.dart';
 
 class SearchPage extends StatelessWidget {
   const SearchPage({super.key});
@@ -19,20 +20,19 @@ class SearchPage extends StatelessWidget {
           children: [
             _buildSearchBar(context),
             _buildResultCount(),
-            Expanded(child: _buildProductContent()),
+            Expanded(child: BuildProductSection()),
           ],
         ),
       ),
     );
   }
 
-  
-// ⚠️ UX Warning: This search screen has no back button or navigation control.
-// If the user lands here without navigating through the app flow (e.g., deep link or initial route),
-// there's no intuitive way to go back. Consider adding an AppBar with a BackButton
-// or a navigation control to improve user experience.
-// ✅ Improved UX: Replaced the search icon with a back icon to give users a clear way to exit the search screen.
-// This avoids dead ends in navigation and aligns better with expected mobile behavior.
+  // ⚠️ UX Warning: This search screen has no back button or navigation control.
+  // If the user lands here without navigating through the app flow (e.g., deep link or initial route),
+  // there's no intuitive way to go back. Consider adding an AppBar with a BackButton
+  // or a navigation control to improve user experience.
+  // ✅ Improved UX: Replaced the search icon with a back icon to give users a clear way to exit the search screen.
+  // This avoids dead ends in navigation and aligns better with expected mobile behavior.
 
   Widget _buildSearchBar(BuildContext context) {
     return Consumer(
@@ -48,8 +48,8 @@ class SearchPage extends StatelessWidget {
           showTrailing: true,
           bottomMargin: 8.h,
           onLeading: () {
-            notifier.clearSearch();
-            notifier.resetFilters();
+            // notifier.clearSearch();
+            // notifier.resetFilters();
             Navigator.of(context).pop();
           },
           onTrailing: () => _showSortBySheet(context),
@@ -81,36 +81,7 @@ class SearchPage extends StatelessWidget {
     );
   }
 
-  Widget _buildProductContent() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w),
-      child: Consumer(
-        builder: (context, ref, _) {
-          final state = ref.watch(productProvider);
-
-          if (state is ProductError) {
-            return Center(
-              child: Text(
-                state.error?.message ?? 'An error occurred',
-                textAlign: TextAlign.center,
-                style: const TextStyle(color: AppColors.primaryColor),
-              ),
-            );
-          }
-
-          if (state is ProductLoading) {
-            return ProductGrid(products: state.products, isLoading: true);
-          }
-
-          if (state is ProductLoaded) {
-            return ProductGrid(products: state.products);
-          }
-
-          return const Center(child: Text('No products found'));
-        },
-      ),
-    );
-  }
+  
 
   Future<void> _showSortBySheet(BuildContext context) async {
     await showModalBottomSheet(
@@ -127,7 +98,12 @@ class SearchPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: EdgeInsets.only(top: 24.h, left: 16.w, right: 16.w,bottom: 16.h),
+                padding: EdgeInsets.only(
+                  top: 24.h,
+                  left: 16.w,
+                  right: 16.w,
+                  bottom: 16.h,
+                ),
                 child: _buildSortHeader(context),
               ),
 
@@ -168,16 +144,16 @@ class SearchPage extends StatelessWidget {
           children: [
             ListTile(
               title: const Text('Price - High to Low'),
-              onTap: () => notifier.sort(SortOrder.highToLow),
+              onTap: () => notifier.sort(SortOrder.priceHighToLow),
             ),
             ListTile(
               title: const Text('Price - Low to High'),
-              onTap: () => notifier.sort(SortOrder.lowToHigh),
+              onTap: () => notifier.sort(SortOrder.priceLowToHigh),
             ),
             ListTile(
               title: const Text('Reset'),
               onTap: () {
-                notifier.resetFilters();
+                //notifier.resetFilters();
                 Navigator.of(context).pop();
               },
             ),
