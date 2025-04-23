@@ -77,16 +77,16 @@ class _ProductCard extends StatelessWidget {
                 ).textTheme.titleSmall?.copyWith(fontSize: 14.sp),
                 children: [
                   TextSpan(
-                    text: '\$${product.price.toStringAsFixed(2)}  ',
+                    text: product.price.toDollar(),
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                       color: AppColors.textColor,
                       fontSize: 14.sp,
                     ),
                   ),
-                  const WidgetSpan(child: SizedBox(width: 4)),
+                 WidgetSpan(child:4.s),
                   TextSpan(
-                    text: '\$${(product.price + 20).toStringAsFixed(2)}',
+                    text: (product.price + 20).toDollar(),
                     style: TextStyle(
                       decoration: TextDecoration.lineThrough,
                       color: AppColors.greyColor,
@@ -94,9 +94,9 @@ class _ProductCard extends StatelessWidget {
                       fontSize: 10.sp,
                     ),
                   ),
-                  const WidgetSpan(child: SizedBox(width: 4)),
+                  WidgetSpan(child: 4.s),
                   TextSpan(
-                    text: '\$${product.price.toStringAsFixed(2)}  ',
+                    text: '25% OFF',
                     style: TextStyle(
                       fontWeight: FontWeight.w500,
                       fontSize: 10.sp,
