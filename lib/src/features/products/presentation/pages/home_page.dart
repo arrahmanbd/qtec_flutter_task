@@ -15,8 +15,6 @@ class HomePage extends StatelessWidget {
         builder: (context, ref, child) {
           return FloatingActionButton(
             onPressed: () {
-              //  ref.read(productProvider.notifier).fetchProducts();
-              // ref.read(productProvider.notifier).fetchProducts();
               context.to(const SearchPage());
             },
             child: const Icon(Icons.refresh),
