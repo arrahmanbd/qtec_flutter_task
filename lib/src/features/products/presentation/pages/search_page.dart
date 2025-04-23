@@ -7,6 +7,7 @@ import 'package:qtec_flutter_task/src/features/products/presentation/riverpod/pr
 import 'package:qtec_flutter_task/src/features/products/presentation/widgets/product_grid.dart';
 import 'package:qtec_flutter_task/src/shared/theme/app_colors.dart';
 import 'package:qtec_flutter_task/src/shared/utils/sort_order.dart';
+
 class SearchPage extends StatelessWidget {
   const SearchPage({super.key});
 
@@ -24,6 +25,14 @@ class SearchPage extends StatelessWidget {
       ),
     );
   }
+
+  
+// ⚠️ UX Warning: This search screen has no back button or navigation control.
+// If the user lands here without navigating through the app flow (e.g., deep link or initial route),
+// there's no intuitive way to go back. Consider adding an AppBar with a BackButton
+// or a navigation control to improve user experience.
+// ✅ Improved UX: Replaced the search icon with a back icon to give users a clear way to exit the search screen.
+// This avoids dead ends in navigation and aligns better with expected mobile behavior.
 
   Widget _buildSearchBar(BuildContext context) {
     return Consumer(
@@ -112,13 +121,16 @@ class SearchPage extends StatelessWidget {
         borderRadius: BorderRadius.vertical(top: Radius.zero),
       ),
       builder: (_) {
-        return Padding(
-          padding: EdgeInsets.all(24.h),
+        return SizedBox(
+          height: 370,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildSortHeader(context),
-              SizedBox(height: 16.h),
+              Padding(
+                padding: EdgeInsets.only(top: 24.h, left: 16.w, right: 16.w,bottom: 16.h),
+                child: _buildSortHeader(context),
+              ),
+
               Expanded(child: _buildSortOptions()),
             ],
           ),

@@ -24,7 +24,7 @@ class ProductGrid extends StatelessWidget {
     return Skeletonizer(
       enabled: isLoading,
       child: GridView.builder(
-        padding: 0.p,
+        padding: 16.pt, // included 8 on header
         itemCount: isLoading ? 10 : products.length,
         physics: const BouncingScrollPhysics(),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -53,7 +53,7 @@ class _ProductCard extends StatelessWidget {
 
     return Material(
       color: AppColors.backgroundColor,
-      
+
       elevation: 0,
       clipBehavior: Clip.antiAlias,
       child: InkWell(
@@ -205,21 +205,62 @@ class _ProductCard extends StatelessWidget {
       children: [
         Positioned(
           top: 4.h,
-          right: 12.w,
-          child: CircularIconButton(
-            icon: Icons.favorite_border,
-            //iconPath: 'assets/svgs/heart.svg',
-            onPressed: () {},
-            iconSize: 16,
-            size: 24.sp,
-            backgroundColor: Colors.white,
-            iconColor: AppColors.iconColor,
-            elevation: 0,
-            padding: 0,
-            blur: true,
+          child: Container(
+            padding: EdgeInsets.only(right: 12.w, left: 4.w),
+            width: 156.w,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (true) OutOfStockBadge(),
+                CircularIconButton(
+                  //icon: Icons.favorite_border,
+                  iconPath: 'assets/svgs/heart.svg',
+                  onPressed: () {
+                    // Handle favorite action
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Added to favourite'),
+                        duration: const Duration(seconds: 2),
+                      ),
+                    );
+                  },
+                  iconSize: 16,
+                  size: 24.sp,
+                  backgroundColor: Colors.white,
+                  iconColor: AppColors.iconColor,
+                  elevation: 0,
+                  padding: 0,
+                  blur: true,
+                ),
+              ],
+            ),
           ),
         ),
-      ]
+      ],
+    );
+  }
+}
+
+class OutOfStockBadge extends StatelessWidget {
+  const OutOfStockBadge({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+      decoration: BoxDecoration(
+        color: AppColors.primaryColor,
+        borderRadius: BorderRadius.circular(2.r),
+      ),
+      child: Text(
+        'Out of Stock',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 10.sp,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
     );
   }
 }

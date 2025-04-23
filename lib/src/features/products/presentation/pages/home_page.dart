@@ -19,13 +19,14 @@ class HomePage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildSearchBar(context),
-            const SizedBox(height: 16),
             Expanded(child: _buildProductSection()),
           ],
         ),
       ),
     );
   }
+
+
 
   Widget _buildSearchBar(BuildContext context) {
     return CustomSearchField(
@@ -37,6 +38,7 @@ class HomePage extends StatelessWidget {
         if (!context.mounted) return;
         context.to(const SearchPage());
       },
+      bottomMargin: 8.h,
     );
   }
 
