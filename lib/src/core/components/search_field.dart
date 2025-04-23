@@ -2,19 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_addons/flutter_addons.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 import 'package:qtec_flutter_task/src/shared/theme/app_colors.dart';
-
-const OutlineInputBorder outlineInputBorder = OutlineInputBorder(
-  borderRadius: BorderRadius.all(Radius.circular(12)),
-  borderSide: BorderSide.none,
-);
-
-class CustomSearchField extends StatelessWidget {
+class CustomSearchField extends StatefulWidget {
   final bool disable;
   final Function()? onDisable;
   final String icon;
   final TextInputType type;
   final String hintText;
   final ValueChanged<String>? onChanged;
+  final bool autofocus; // New property for autofocus
+
   const CustomSearchField({
     super.key,
     this.disable = false,
@@ -23,22 +19,47 @@ class CustomSearchField extends StatelessWidget {
     required this.type,
     required this.hintText,
     this.onChanged,
+    this.autofocus = false, // Default is false, can be set to true for autofocus
   });
+
+  @override
+  _CustomSearchFieldState createState() => _CustomSearchFieldState();
+}
+
+class _CustomSearchFieldState extends State<CustomSearchField> {
+  late FocusNode _focusNode;
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode = FocusNode();
+
+    // Auto-focus the field when autofocus is true
+    if (widget.autofocus) {
+      Future.delayed(Duration(milliseconds: 100), () {
+        FocusScope.of(context).requestFocus(_focusNode);
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        if (disable) {
-          onDisable!();
+        if (widget.disable) {
+          widget.onDisable?.call();  // Trigger onDisable callback if the field is disabled
         } else {
-          // If enabled, request focus to show the keyboard
-          FocusScope.of(context).requestFocus(FocusNode());
+          FocusScope.of(context).requestFocus(_focusNode); // Request focus on tap
         }
       },
       child: AbsorbPointer(
-        // Disables interaction when 'disabled' is true
-        absorbing: disable,
+        absorbing: widget.disable, // Disable interactions if 'disable' is true
         child: Container(
           margin: EdgeInsets.only(
             top: MediaQuery.of(context).padding.top + 20,
@@ -62,9 +83,10 @@ class CustomSearchField extends StatelessWidget {
                 ),
               ),
               TextFormField(
-                keyboardType: type,
+                focusNode: _focusNode, // Attach the FocusNode here
+                keyboardType: widget.type,
                 decoration: InputDecoration(
-                  hintText: hintText,
+                  hintText: widget.hintText,
                   hintStyle: TextStyle(
                     color: AppColors.greyColor, // Adjust to fit your theme
                     fontWeight: FontWeight.w400,
@@ -74,7 +96,7 @@ class CustomSearchField extends StatelessWidget {
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.only(left: 48),
                 ),
-                onChanged: onChanged,
+                onChanged: widget.onChanged,
               ),
             ],
           ),

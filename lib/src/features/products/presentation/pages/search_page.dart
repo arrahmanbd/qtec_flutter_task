@@ -5,7 +5,6 @@ import 'package:qtec_flutter_task/src/core/components/search_field.dart';
 import 'package:qtec_flutter_task/src/features/products/presentation/riverpod/product_provider.dart';
 import 'package:qtec_flutter_task/src/features/products/presentation/riverpod/product_state.dart';
 import 'package:qtec_flutter_task/src/features/products/presentation/widgets/product_grid.dart';
-import 'package:qtec_flutter_task/src/features/products/presentation/widgets/product_layout.dart';
 import 'package:qtec_flutter_task/src/shared/utils/sort_order.dart';
 
 class SearchPage extends ConsumerWidget {
@@ -94,7 +93,7 @@ class SearchLayout extends ConsumerWidget {
             type: TextInputType.text,
             hintText: 'Search Anything...',
             onChanged: notifier.search,
-            
+            autofocus: true,
           ),
 
           Expanded(
