@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_addons/flutter_addons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:qtec_flutter_task/src/core/components/search_field.dart';
 import 'package:qtec_flutter_task/src/features/products/presentation/riverpod/product_provider.dart';
+import 'package:qtec_flutter_task/src/features/products/presentation/riverpod/product_state.dart';
+import 'package:qtec_flutter_task/src/features/products/presentation/widgets/product_grid.dart';
 import 'package:qtec_flutter_task/src/features/products/presentation/widgets/product_layout.dart';
 import 'package:qtec_flutter_task/src/shared/utils/sort_order.dart';
 
@@ -10,7 +14,7 @@ class SearchPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      body: ProductLayout(),
+      body: SearchLayout(),
       floatingActionButton: Consumer(
         builder: (context, ref, child) {
           return FloatingActionButton(
@@ -69,6 +73,37 @@ class SearchPage extends ConsumerWidget {
             child: const Icon(Icons.refresh),
           );
         },
+      ),
+    );
+  }
+}
+
+
+class SearchLayout extends ConsumerWidget {
+  const SearchLayout({super.key});
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final productState = ref.watch(productProvider);
+    final notifier = ref.read(productProvider.notifier);
+    return Padding(
+      padding: 16.px,
+      child: Column(
+        children: [
+          CustomSearchField(
+            icon: 'assets/svgs/search-normal.svg',
+            type: TextInputType.text,
+            hintText: 'Search Anything...',
+            onChanged: notifier.search,
+            
+          ),
+
+          Expanded(
+            child:
+                productState is ProductLoaded
+                    ? ProductGrid(products: productState.products)
+                    : const Center(child: CircularProgressIndicator()),
+          ),
+        ],
       ),
     );
   }

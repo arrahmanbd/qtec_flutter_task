@@ -1,6 +1,11 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter_addons/flutter_addons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg_provider/flutter_svg_provider.dart';
+import 'package:qtec_flutter_task/src/core/components/search_field.dart';
+import 'package:qtec_flutter_task/src/features/products/presentation/pages/search_page.dart';
+
 import 'package:qtec_flutter_task/src/features/products/presentation/riverpod/product_provider.dart';
 import 'package:qtec_flutter_task/src/features/products/presentation/riverpod/product_state.dart';
 import 'package:qtec_flutter_task/src/features/products/presentation/widgets/product_grid.dart';
@@ -16,31 +21,19 @@ class ProductLayout extends ConsumerWidget {
       padding: 16.px,
       child: Column(
         children: [
-          Container(
-            margin: 45.mt,
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: 'Search Anything...',
-                contentPadding: EdgeInsets.symmetric(
-                  vertical: 12.h,
-                  horizontal: 16.w,
-                ),
-                prefixIcon: const Icon(Icons.search),
-                hintStyle: TextStyle(
-                  color: AppColors.greyColor,
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w400
-                ),
-                border: _borderStyle(),
-                focusedBorder: _borderStyle(),
-                enabledBorder:_borderStyle()
-                
-              ),
-              onChanged: notifier.search,
-              
-            ),
+          CustomSearchField(
+            icon: 'assets/svgs/search-normal.svg',
+            type: TextInputType.text,
+            hintText: 'Search Anything...',
+            // onChanged: notifier.search,
+            disable: true,
+            onDisable: () {
+              // Perform any action when the field is disabled
+              // For example, show a snackbar or alert
+              context.to(SearchPage());
+            },
           ),
-      
+
           Expanded(
             child:
                 productState is ProductLoaded
@@ -50,15 +43,5 @@ class ProductLayout extends ConsumerWidget {
         ],
       ),
     );
-  }
-
-  OutlineInputBorder _borderStyle() {
-    return OutlineInputBorder(
-                borderSide: BorderSide(
-                  color: AppColors.outline,
-                  width: 1.w,
-                ),
-                borderRadius: BorderRadius.circular(8.r),
-              );
   }
 }
