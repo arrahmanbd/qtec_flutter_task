@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 
-const lightColorScheme = ColorScheme.light(
-  primary: Colors.blue,
-  secondary: Colors.amber,
-  surface: Colors.white,
-);
 
-const darkColorScheme = ColorScheme.dark(
-  primary: Colors.blueAccent,
-  secondary: Colors.amber,
-  surface: Color(0xFF121212),
-);
-
+class AppColors {
+  static const Color primaryColor = Color(0xFFFF3B30);
+  static const Color secondaryColor = Color(0xFFEA580C);
+  static const Color backgroundColor = Color(0xFFFFFFFF);
+  static const Color outline = Color(0xFFD1D5DB);
+  static const Color greyColor = Color(0xFFD1D5DB);
+  static const Color textColor = Color(0xFF1F2937);
+  static const Color cardColor = Color(0xFFF9FAFB);
+}

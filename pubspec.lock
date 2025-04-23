@@ -234,10 +234,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_addons
-      sha256: b2b1b12f7839c98c4ba6ffbe678a60b5a9685d4d4e6349366a6df5b591837ed2
+      sha256: "9efb3cc4b2f4895346fe592a1d498e5f62d7315d2dc2eb0d3bed6ef71ea982e0"
       url: "https://pub.dev"
     source: hosted
-    version: "1.2.3"
+    version: "1.2.4"
   flutter_lints:
     dependency: "direct dev"
     description:

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_addons/flutter_addons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:qtec_flutter_task/src/features/products/presentation/widgets/product_list.dart';
-
-import '../riverpod/product_provider.dart';
+import 'package:qtec_flutter_task/src/features/products/presentation/widgets/product_layout.dart';
+import 'search_page.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -10,17 +10,17 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Qtech App')),
-      body: ProductGridPage(),
+      body: ProductLayout(),
       floatingActionButton: Consumer(
         builder: (context, ref, child) {
           return FloatingActionButton(
-              onPressed: () {
-               ref.read(productProvider.notifier).fetchProducts();
+            onPressed: () {
+              //  ref.read(productProvider.notifier).fetchProducts();
               // ref.read(productProvider.notifier).fetchProducts();
-              },
-              child: const Icon(Icons.refresh),
-            );
+              context.to(const SearchPage());
+            },
+            child: const Icon(Icons.refresh),
+          );
         },
       ),
     );
