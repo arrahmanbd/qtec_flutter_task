@@ -8,9 +8,9 @@ final ThemeData lightTheme = ThemeData(
   scaffoldBackgroundColor: AppColors.backgroundColor,
   appBarTheme: AppBarTheme(
     backgroundColor: AppColors.backgroundColor,
-    foregroundColor: AppColors.textColor,
+    foregroundColor: AppColors.textPrimary,
   ),
   textTheme: TextTheme(),
-  iconTheme: IconThemeData(color: AppColors.textColor),
+  iconTheme: IconThemeData(color: AppColors.textPrimary),
   fontFamily: 'Inter',
 );

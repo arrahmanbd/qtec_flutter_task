@@ -77,23 +77,36 @@ class SearchPage extends ConsumerWidget {
   }
 }
 
-
 class SearchLayout extends ConsumerWidget {
   const SearchLayout({super.key});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final productState = ref.watch(productProvider);
-    final notifier = ref.read(productProvider.notifier);
     return Padding(
       padding: 16.px,
       child: Column(
         children: [
-          CustomSearchField(
-            icon: 'assets/svgs/search-normal.svg',
-            type: TextInputType.text,
-            hintText: 'Search Anything...',
-            onChanged: notifier.search,
-            autofocus: true,
+          Consumer(
+            builder: (context, ref, child) {
+              final notifier = ref.read(productProvider.notifier);
+              return CustomSearchField(
+                icon: 'assets/svgs/back.svg',
+                type: TextInputType.text,
+                hintText: 'Search Anything...',
+                onChanged: notifier.search,
+                autofocus: true,
+                showTrailing: true,
+                onLeading: () {
+                  notifier.clearSearch();
+                  notifier.resetFilters();
+                  // Close the search page
+                  Navigator.of(context).pop();
+                },
+                onTrailing: () {
+                  print('Show Filter');
+                },
+              );
+            },
           ),
 
           Expanded(

@@ -49,16 +49,16 @@ class _ProductCard extends StatelessWidget {
             AspectRatio(
               aspectRatio: 1,
               child: ClipRRect(
-              borderRadius: BorderRadius.circular(4.r),
-              child: Container(
-                color: AppColors.greyColor,
-                child: Image.network(
-                  product.image,
-                  fit: BoxFit.cover,
-                  width: 156.w,
-                  height: 164.h,
+                borderRadius: BorderRadius.circular(4.r),
+                child: Container(
+                  color: AppColors.greyColor,
+                  child: Image.network(
+                    product.image,
+                    fit: BoxFit.cover,
+                    width: 156.w,
+                    height: 164.h,
+                  ),
                 ),
-              ),
               ),
             ),
             SizedBox(
@@ -80,11 +80,11 @@ class _ProductCard extends StatelessWidget {
                     text: product.price.toDollar(),
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
-                      color: AppColors.textColor,
+                      color: AppColors.textPrimary,
                       fontSize: 14.sp,
                     ),
                   ),
-                 WidgetSpan(child:4.s),
+                  WidgetSpan(child: 4.s),
                   TextSpan(
                     text: (product.price + 20).toDollar(),
                     style: TextStyle(
@@ -114,24 +114,24 @@ class _ProductCard extends StatelessWidget {
                 children: [
                   WidgetSpan(
                     child: Container(
-                    padding: EdgeInsets.all(2),
-                    decoration: BoxDecoration(
-                      color: AppColors.primaryColor,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Icon(Icons.star, size: 16, color: Colors.white),
+                      padding: EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryColor,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Icon(Icons.star, size: 16, color: Colors.white),
                     ),
                   ),
-                   const WidgetSpan(child: SizedBox(width: 4)),
+                  const WidgetSpan(child: SizedBox(width: 4)),
                   TextSpan(
                     text: '4.3 ',
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
-                      color: AppColors.textColor,
+                      color: AppColors.textPrimary,
                       fontSize: 12.sp,
                     ),
                   ),
-                
+
                   const WidgetSpan(child: SizedBox(width: 4)),
                   TextSpan(
                     text: '(646)',
@@ -143,7 +143,7 @@ class _ProductCard extends StatelessWidget {
                   ),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),

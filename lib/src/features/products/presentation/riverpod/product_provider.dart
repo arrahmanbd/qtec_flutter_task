@@ -1,5 +1,3 @@
-
-
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qtec_flutter_task/src/core/resources/data_state.dart';
@@ -13,7 +11,6 @@ import 'package:qtec_flutter_task/src/shared/utils/sort_order.dart';
 final productProvider = StateNotifierProvider<ProductNotifier, ProductState>(
   (ref) => ProductNotifier(sl<GetProductUsecase>()),
 );
-
 
 class ProductNotifier extends StateNotifier<ProductState> {
   final GetProductUsecase getProductUsecase;
@@ -49,6 +46,17 @@ class ProductNotifier extends StateNotifier<ProductState> {
 
   void sort(SortOrder order) {
     _currentSort = order;
+    _applyFilters();
+  }
+
+  void resetFilters() {
+    _currentQuery = '';
+    _currentSort = SortOrder.lowToHigh;
+    _applyFilters();
+  }
+
+  void clearSearch() {
+    _currentQuery = '';
     _applyFilters();
   }
 
