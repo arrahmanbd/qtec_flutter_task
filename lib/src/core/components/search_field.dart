@@ -16,6 +16,7 @@ class CustomSearchField extends StatefulWidget {
   final Function()? onTrailing;
   final bool showTrailing;
   final Function()? onLeading;
+  final double? bottomMargin;
 
   const CustomSearchField({
     Key? key,
@@ -29,6 +30,7 @@ class CustomSearchField extends StatefulWidget {
     this.onTrailing,
     this.showTrailing = false,
     this.onLeading,
+    this.bottomMargin,
   }) : super(key: key);
 
   @override
@@ -63,7 +65,11 @@ class _CustomSearchFieldState extends State<CustomSearchField> {
   Widget build(BuildContext context) {
     final verticalOffset = MediaQuery.of(context).padding.top + 20.h;
     return Container(
-      margin: EdgeInsets.only(top: verticalOffset, bottom: 24.h),
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      margin: EdgeInsets.only(
+        top: verticalOffset,
+        bottom: widget.bottomMargin ?? 24.h,
+      ),
       child:
           widget.disable
               ? GestureDetector(

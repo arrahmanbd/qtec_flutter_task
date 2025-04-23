@@ -7,119 +7,169 @@ import 'package:qtec_flutter_task/src/features/products/presentation/riverpod/pr
 import 'package:qtec_flutter_task/src/features/products/presentation/widgets/product_grid.dart';
 import 'package:qtec_flutter_task/src/shared/theme/app_colors.dart';
 import 'package:qtec_flutter_task/src/shared/utils/sort_order.dart';
-
 class SearchPage extends StatelessWidget {
   const SearchPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: 16.px,
+      body: SafeArea(
         child: Column(
           children: [
-            Consumer(
-              builder: (context, ref, child) {
-                final notifier = ref.read(productProvider.notifier);
-                return CustomSearchField(
-                  icon: 'assets/svgs/back.svg',
-                  type: TextInputType.text,
-                  hintText: 'Search Anything...',
-                  onChanged: notifier.search,
-                  autofocus: true,
-                  showTrailing: true,
-                  onLeading: () {
-                    notifier.clearSearch();
-                    notifier.resetFilters();
-                    // Close the search page
-                    Navigator.of(context).pop();
-                  },
-                  onTrailing: () {
-                    _showSortBySheet(context);
-                  },
-                );
-              },
-            ),
-
-            Consumer(
-              builder: (_, WidgetRef ref, __) {
-                final productState = ref.watch(productProvider);
-                return Expanded(
-                  child:
-                      productState is ProductLoaded
-                          ? ProductGrid(products: productState.products)
-                          : const Center(child: CircularProgressIndicator()),
-                );
-              },
-            ),
+            _buildSearchBar(context),
+            _buildResultCount(),
+            Expanded(child: _buildProductContent()),
           ],
         ),
       ),
     );
   }
 
-  Future<dynamic> _showSortBySheet(BuildContext context) {
-    return showModalBottomSheet(
+  Widget _buildSearchBar(BuildContext context) {
+    return Consumer(
+      builder: (context, ref, _) {
+        final notifier = ref.read(productProvider.notifier);
+
+        return CustomSearchField(
+          icon: 'assets/svgs/back.svg',
+          type: TextInputType.text,
+          hintText: 'Search Anything...',
+          onChanged: notifier.search,
+          autofocus: true,
+          showTrailing: true,
+          bottomMargin: 8.h,
+          onLeading: () {
+            notifier.clearSearch();
+            notifier.resetFilters();
+            Navigator.of(context).pop();
+          },
+          onTrailing: () => _showSortBySheet(context),
+        );
+      },
+    );
+  }
+
+  Widget _buildResultCount() {
+    return Consumer(
+      builder: (context, ref, _) {
+        final productCount = ref.watch(productProvider).products.length;
+        return Container(
+          color: AppColors.cardColor,
+          padding: EdgeInsets.symmetric(vertical: 8.h),
+          width: double.infinity,
+          child: Center(
+            child: Text(
+              '$productCount Items found',
+              style: TextStyle(
+                fontSize: 12.sp,
+                fontWeight: FontWeight.w400,
+                color: AppColors.textSecondary,
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildProductContent() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      child: Consumer(
+        builder: (context, ref, _) {
+          final state = ref.watch(productProvider);
+
+          if (state is ProductError) {
+            return Center(
+              child: Text(
+                state.error?.message ?? 'An error occurred',
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: AppColors.primaryColor),
+              ),
+            );
+          }
+
+          if (state is ProductLoading) {
+            return ProductGrid(products: state.products, isLoading: true);
+          }
+
+          if (state is ProductLoaded) {
+            return ProductGrid(products: state.products);
+          }
+
+          return const Center(child: Text('No products found'));
+        },
+      ),
+    );
+  }
+
+  Future<void> _showSortBySheet(BuildContext context) async {
+    await showModalBottomSheet(
+      context: context,
       isScrollControlled: false,
       backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.zero),
       ),
-      context: context,
-      builder: (context) {
-        return Container(
-          padding: 24.py,
-          height: 317.h,
+      builder: (_) {
+        return Padding(
+          padding: EdgeInsets.all(24.h),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ListTile(
-                leading: Text(
-                  'Sort by',
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary
-                  ),
-                ),
-                trailing: IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-              ),
-             
-              16.s,
-              Expanded(
-                child: Consumer(
-                  builder: (_, WidgetRef ref, __) {
-                    final notifier = ref.read(productProvider.notifier);
-                    return ListView(
-                      
-                      children: [
-                        ListTile(
-                          title: const Text('Price - High to Low'),
-                          onTap: () => notifier.sort(SortOrder.highToLow),
-                        ),
-                        ListTile(
-                          title: const Text('Price - Low to High'),
-                          onTap: () => notifier.sort(SortOrder.lowToHigh),
-                        ),
-                        ListTile(
-                          title: const Text('Reset'),
-                          onTap: () {
-                            notifier.resetFilters();
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                      ],
-                    );
-                  },
-                ),
-              ),
+              _buildSortHeader(context),
+              SizedBox(height: 16.h),
+              Expanded(child: _buildSortOptions()),
             ],
           ),
+        );
+      },
+    );
+  }
+
+  Widget _buildSortHeader(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          'Sort by',
+          style: TextStyle(
+            fontSize: 16.sp,
+            fontWeight: FontWeight.bold,
+            color: AppColors.textPrimary,
+          ),
+        ),
+        IconButton(
+          icon: const Icon(Icons.close),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSortOptions() {
+    return Consumer(
+      builder: (context, ref, _) {
+        final notifier = ref.read(productProvider.notifier);
+
+        return ListView(
+          children: [
+            ListTile(
+              title: const Text('Price - High to Low'),
+              onTap: () => notifier.sort(SortOrder.highToLow),
+            ),
+            ListTile(
+              title: const Text('Price - Low to High'),
+              onTap: () => notifier.sort(SortOrder.lowToHigh),
+            ),
+            ListTile(
+              title: const Text('Reset'),
+              onTap: () {
+                notifier.resetFilters();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
         );
       },
     );

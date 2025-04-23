@@ -1,6 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_addons/flutter_addons.dart';
+import 'package:qtec_flutter_task/src/features/products/data/models/product_model.dart';
 
 import 'package:qtec_flutter_task/src/features/products/domain/entities/product.dart';
 import 'package:qtec_flutter_task/src/shared/theme/app_colors.dart';
@@ -9,7 +12,11 @@ import 'package:skeletonizer/skeletonizer.dart';
 class ProductGrid extends StatelessWidget {
   final List<Product> products;
   final bool isLoading;
-  const ProductGrid({super.key, required this.products, this.isLoading = false});
+  const ProductGrid({
+    super.key,
+    required this.products,
+    this.isLoading = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +24,7 @@ class ProductGrid extends StatelessWidget {
       enabled: isLoading,
       child: GridView.builder(
         padding: 0.p,
-        itemCount: isLoading ? 6 : products.length,
+        itemCount: isLoading ? 10 : products.length,
         physics: const BouncingScrollPhysics(),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
@@ -26,7 +33,7 @@ class ProductGrid extends StatelessWidget {
           crossAxisSpacing: 16.w,
         ),
         itemBuilder: (context, index) {
-          final product = products[index];
+          final product = isLoading ? ProductModel.fake() : products[index];
           return _ProductCard(product: product);
         },
       ),
@@ -41,6 +48,7 @@ class _ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isLoading = Skeletonizer.of(context).enabled;
     return Material(
       color: AppColors.backgroundColor,
       borderRadius: BorderRadius.circular(12.r),
@@ -52,18 +60,33 @@ class _ProductCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           spacing: 8.h,
           children: [
-            AspectRatio(
-              aspectRatio: 1,
+            SizedBox(
+              width: 156.w,
+              height: 164.h,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(4.r),
-                child: Container(
-                  color: AppColors.greyColor,
-                  child: Image.network(
-                    product.image,
-                    fit: BoxFit.cover,
-                    width: 156.w,
-                    height: 164.h,
-                  ),
+                child: CachedNetworkImage(
+                  imageUrl: product.image,
+                  fit: BoxFit.cover,
+                  width: 156.w,
+                  height: 164.h,
+                  placeholder:
+                      (context, url) => Container(
+                        color: AppColors.greyColor,
+                        child: const Center(
+                          child: CupertinoActivityIndicator(),
+                        ),
+                      ),
+                  errorWidget:
+                      (context, url, error) => Container(
+                        color: AppColors.greyColor,
+                        child: const Center(
+                          child: Icon(
+                            Icons.broken_image,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                      ),
                 ),
               ),
             ),
@@ -118,16 +141,29 @@ class _ProductCard extends StatelessWidget {
                   context,
                 ).textTheme.titleSmall?.copyWith(fontSize: 14.sp),
                 children: [
-                  WidgetSpan(
-                    child: Container(
-                      padding: EdgeInsets.all(2),
-                      decoration: BoxDecoration(
-                        color: AppColors.primaryColor,
-                        borderRadius: BorderRadius.circular(4),
+                  // fix the loading state skeleton
+                  if (isLoading)
+                    WidgetSpan(
+                      alignment: PlaceholderAlignment.middle,
+                      child: SizedBox(),
+                    )
+                  else
+                    WidgetSpan(
+                      alignment: PlaceholderAlignment.middle,
+                      child: Container(
+                        padding: const EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryColor,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: const Icon(
+                          Icons.star,
+                          size: 16,
+                          color: Colors.white,
+                        ),
                       ),
-                      child: Icon(Icons.star, size: 16, color: Colors.white),
                     ),
-                  ),
+
                   const WidgetSpan(child: SizedBox(width: 4)),
                   TextSpan(
                     text: '4.3 ',
