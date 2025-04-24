@@ -480,14 +480,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.1.1"
-  load_more_pagination:
-    dependency: "direct main"
-    description:
-      name: load_more_pagination
-      sha256: "170a018eb163dd571c450830ae7a4c64a45a22399b687576dfaafd2cfc0f6e37"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.0.2"
   logging:
     dependency: transitive
     description:
