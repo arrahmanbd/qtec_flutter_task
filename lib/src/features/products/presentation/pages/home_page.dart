@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_addons/flutter_addons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:qtec_flutter_task/src/core/components/page_transition.dart';
 import 'package:qtec_flutter_task/src/core/components/search_field.dart';
+import 'package:qtec_flutter_task/src/core/resources/assets_link.dart';
 
 import 'package:qtec_flutter_task/src/features/products/presentation/widgets/product_section.dart';
 import 'package:qtec_flutter_task/src/shared/global/connection_status.dart';
@@ -39,7 +41,7 @@ class HomePage extends ConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           _buildSearchBar(context),
-
+          8.s,
           Expanded(child: BuildProductSection()),
         ],
       ),
@@ -48,13 +50,12 @@ class HomePage extends ConsumerWidget {
 
   Widget _buildSearchBar(BuildContext context) {
     return CustomSearchField(
-      icon: 'assets/svgs/search-normal.svg',
+      icon: Assets.search,
       type: TextInputType.text,
       hintText: 'Search Anything...',
       disable: true,
       onDisable: () {
-        if (!context.mounted) return;
-        context.to(const SearchPage());
+        Navigator.push(context, SlideRightToLeftRoute(page: SearchPage()));
       },
       bottomMargin: 8.h,
     );

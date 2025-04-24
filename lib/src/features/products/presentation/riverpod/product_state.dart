@@ -1,7 +1,8 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
-import 'package:qtec_flutter_task/src/features/products/domain/entities/product.dart';
 
+import 'package:qtec_flutter_task/src/features/products/domain/entities/product.dart';
 
 class ProductState extends Equatable {
   final List<Product> products;
@@ -9,6 +10,7 @@ class ProductState extends Equatable {
   final bool isLoadingMore;
   final bool isRefreshing;
   final bool isFinished;
+  final bool isempty;
   final DioException? error;
 
   const ProductState({
@@ -17,6 +19,7 @@ class ProductState extends Equatable {
     this.isLoadingMore = false,
     this.isRefreshing = false,
     this.isFinished = false,
+    this.isempty = false,
     this.error,
   });
 
@@ -26,6 +29,7 @@ class ProductState extends Equatable {
     bool? isLoadingMore,
     bool? isRefreshing,
     bool? isFinished,
+    bool? isempty,
     DioException? error,
   }) {
     return ProductState(
@@ -34,17 +38,19 @@ class ProductState extends Equatable {
       isLoadingMore: isLoadingMore ?? this.isLoadingMore,
       isRefreshing: isRefreshing ?? this.isRefreshing,
       isFinished: isFinished ?? this.isFinished,
+      isempty: isempty ?? this.isempty,
       error: error ?? this.error,
     );
   }
 
   @override
   List<Object?> get props => [
-        products,
-        isLoading,
-        isLoadingMore,
-        isRefreshing,
-        isFinished,
-        error,
-      ];
+    products,
+    isLoading,
+    isLoadingMore,
+    isRefreshing,
+    isFinished,
+    error,
+    isempty,
+  ];
 }

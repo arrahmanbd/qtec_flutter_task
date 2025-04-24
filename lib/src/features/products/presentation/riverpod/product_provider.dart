@@ -48,14 +48,11 @@ class ProductNotifier extends StateNotifier<ProductState> {
 
   // Load more products for pagination
   Future<bool> loadMore() async {
-    
     if (state.isLoadingMore || state.isFinished) return true;
-
     state = state.copyWith(isLoadingMore: true);
     await Future.delayed(
       const Duration(milliseconds: 800),
     ); // Simulating network delay
-
     // Increment the page to load the next set of products
     _page++;
     dbug('Load more products for page $_page');
@@ -67,15 +64,14 @@ class ProductNotifier extends StateNotifier<ProductState> {
   void _applyFilters() {
     var filtered = ProductFilterUtils.search(_allProducts, _currentQuery);
     var sorted = ProductFilterUtils.sort(filtered, _currentSort);
-
     // Paginate based on the current page and page size
     var paginated = sorted.take(_page * _pageSize).toList();
-
     state = state.copyWith(
       products: paginated,
       isLoading: false,
       isRefreshing: false,
       isLoadingMore: false,
+      isempty: false,
       isFinished:
           paginated.length >= sorted.length, // Check if all products are loaded
     );
@@ -83,14 +79,21 @@ class ProductNotifier extends StateNotifier<ProductState> {
 
   // Refresh the product list
   Future<void> refresh() async {
-    state = state.copyWith(isRefreshing: true, products: []);
+    state = state.copyWith(
+      isRefreshing: true,
+      error: null, // optional, clear error on refresh
+      isLoading: false,
+      isLoadingMore: false,
+      // Remove `isempty: true`, let _applyFilters decide this later
+    );
 
-    await Future.delayed(
-      const Duration(milliseconds: 800),
-    ); // Simulate refresh delay
-    _page = 1; // Reset page on refresh
-    fetchInitialProducts();
-    clearFilters() ; // Reapply filters after refresh
+    await Future.delayed(const Duration(milliseconds: 800));
+
+    _page = 0;
+    _allProducts.clear();
+
+    await fetchInitialProducts(); // already calls _applyFilters
+    clearFilters();
   }
 
   // Search functionality

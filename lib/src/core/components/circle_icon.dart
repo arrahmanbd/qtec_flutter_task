@@ -1,10 +1,6 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_addons/flutter_addons.dart';
-import 'package:flutter_svg_provider/flutter_svg_provider.dart';
-import 'package:qtec_flutter_task/src/shared/theme/app_colors.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class CircularIconButton extends StatelessWidget {
   final IconData? icon;
@@ -14,8 +10,8 @@ class CircularIconButton extends StatelessWidget {
   final Color? backgroundColor;
   final Color? iconColor;
   final double elevation;
-  final int padding;
-  final int iconSize;
+  final double padding;
+  final double iconSize;
   final bool blur;
 
   const CircularIconButton({
@@ -23,29 +19,32 @@ class CircularIconButton extends StatelessWidget {
     this.icon,
     this.iconPath,
     required this.onPressed,
-    this.size = 24.0,
+    this.size = 48.0,
     this.backgroundColor,
     this.iconColor,
     this.elevation = 0.0,
-    this.padding = 4,
-    this.iconSize = 16,
+    this.padding = 8.0,
+    this.iconSize = 20.0,
     this.blur = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    final iconWidget =
+    final Widget iconWidget =
         iconPath != null
-            ? Image(
-              image: Svg(iconPath!),
-              height: iconSize.sp,
-              width: iconSize.sp,
-              color: iconColor ?? AppColors.iconColor,
+            ? SvgPicture.asset(
+              iconPath!,
+              height: iconSize,
+              width: iconSize,
+              colorFilter:
+                  iconColor != null
+                      ? ColorFilter.mode(iconColor!, BlendMode.srcIn)
+                      : null,
             )
             : Icon(
               icon,
-              color: iconColor ?? AppColors.iconColor,
-              size: iconSize.sp,
+              size: iconSize,
+              color: iconColor ?? Theme.of(context).iconTheme.color,
             );
 
     return Material(
@@ -56,28 +55,29 @@ class CircularIconButton extends StatelessWidget {
         customBorder: const CircleBorder(),
         onTap: onPressed,
         child: Container(
-          width: size.w,
-          height: size.h,
+          width: size,
+          height: size,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color:
-                backgroundColor?.withValues(alpha: blur ? 0.60 : 1.0) ??
-                Colors.transparent,
+            color: backgroundColor ?? Colors.transparent,
           ),
           child:
               blur
-                  ? ClipRRect(
-                    borderRadius: BorderRadius.circular(100.r),
+                  ? ClipOval(
                     child: Stack(
                       fit: StackFit.expand,
                       children: [
                         BackdropFilter(
-                          filter: ImageFilter.blur(sigmaX: 6.0, sigmaY: 6.0),
-                          child: const SizedBox(),
+                          filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                          child: Container(
+                            color: (backgroundColor ?? Colors.white).withValues(
+                              alpha: 0.3,
+                            ),
+                          ),
                         ),
                         Center(
                           child: Padding(
-                            padding: EdgeInsets.all(padding.toDouble()),
+                            padding: EdgeInsets.all(padding),
                             child: iconWidget,
                           ),
                         ),
@@ -86,7 +86,7 @@ class CircularIconButton extends StatelessWidget {
                   )
                   : Center(
                     child: Padding(
-                      padding: EdgeInsets.all(padding.toDouble()),
+                      padding: EdgeInsets.all(padding),
                       child: iconWidget,
                     ),
                   ),

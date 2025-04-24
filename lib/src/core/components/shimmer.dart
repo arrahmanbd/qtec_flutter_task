@@ -4,15 +4,15 @@ import 'package:qtec_flutter_task/src/shared/theme/app_colors.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 class Shimmer extends StatelessWidget {
-  const Shimmer({super.key,});
+  const Shimmer({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Skeletonizer(
       enabled: true,
       child: GridView.builder(
-        padding: EdgeInsets.symmetric(vertical: 16.h), // included 8 on header
-        itemCount:  10,
+        padding: 0.p, // included 8 on header
+        itemCount: 10,
         physics: const AlwaysScrollableScrollPhysics(),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
@@ -27,6 +27,7 @@ class Shimmer extends StatelessWidget {
     );
   }
 }
+
 class ProductCardSkeleton extends StatelessWidget {
   const ProductCardSkeleton({super.key});
 
@@ -62,6 +63,7 @@ class ProductCardSkeleton extends StatelessWidget {
     );
   }
 }
+
 class SkeletonLoader extends StatelessWidget {
   final double width;
   final double height;

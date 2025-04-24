@@ -39,6 +39,7 @@ class InternetConnectivityChecker {
     debugPrint('[ConnectivityChecker] Internet connected: $_hasConnection');
     _connectionStatusController.add(_hasConnection);
   }
+
   /// Check the current connection status.
   /// This method can be called to manually check the connection status.
   Future<void> checkNow() async => _updateConnectionStatus();

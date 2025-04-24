@@ -1,4 +1,3 @@
-
 import 'package:qtec_flutter_task/src/core/resources/data_state.dart';
 import 'package:qtec_flutter_task/src/core/usecase/base_usecase.dart';
 import 'package:qtec_flutter_task/src/features/products/domain/entities/product.dart';
@@ -12,5 +11,3 @@ class GetProductUsecase implements UseCase<DataState<List<Product>>, void> {
     return productRepository.getProducts();
   }
 }
-
-

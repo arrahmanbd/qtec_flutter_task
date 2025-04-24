@@ -1,16 +1,11 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_addons/flutter_addons.dart';
 import 'package:qtec_flutter_task/src/core/components/circle_icon.dart';
-import 'package:qtec_flutter_task/src/features/products/data/models/product_model.dart';
 
 import 'package:qtec_flutter_task/src/features/products/domain/entities/product.dart';
 import 'package:qtec_flutter_task/src/shared/theme/app_colors.dart';
-import 'package:skeletonizer/skeletonizer.dart';
-
-
 
 class ProductCardWidget extends StatelessWidget {
   const ProductCardWidget({super.key, required this.product});
@@ -19,6 +14,61 @@ class ProductCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // demonestrated  the favorite button
+    // and out of stock badge
+    final fav = [1, 4, 5].contains(product.id);
+    final outOfStock = [4, 11, 15].contains(product.id);
+    return Stack(
+      children: [
+        _buildBaseCard(context),
+        Positioned(
+          top: 8.h,
+          child: Container(
+            padding: EdgeInsets.only(right: 12.w, left: 4.w),
+            width: 156.w,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                outOfStock ? const OutOfStockBadge() : const SizedBox(),
+                CircularIconButton(
+                  iconPath:
+                      fav
+                          ? 'assets/svgs/heart_filled.svg'
+                          : 'assets/svgs/heart.svg',
+                  onPressed: () {
+                    // Handle favorite action
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Added to favourite'),
+                        duration: const Duration(seconds: 2),
+                      ),
+                    );
+                  },
+                  iconSize: 16,
+
+                  size: 24.sp,
+                  backgroundColor: AppColors.backgroundColor.withValues(
+                    alpha: 0.7,
+                  ),
+                  //iconColor: AppColors.red,
+                  elevation: 0,
+                  padding: 0,
+                  // Disabled blur for performance optimization
+                  // I found that the blur effect was not necessary for this design
+                  // and it was causing performance issues on lower-end devices.
+                  // If you want to keep the blur effect, you can set it to true
+                  blur: false,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Card _buildBaseCard(BuildContext context) {
     return Card(
       color: AppColors.backgroundColor,
       elevation: 0,
@@ -38,7 +88,7 @@ class ProductCardWidget extends StatelessWidget {
                 placeholder:
                     (context, url) => Container(
                       color: AppColors.greyColor,
-                      child: const Center(child: CupertinoActivityIndicator()),
+                      // child: const Center(child: CupertinoActivityIndicator()),
                     ),
                 errorWidget:
                     (context, url, error) => Container(
@@ -53,6 +103,7 @@ class ProductCardWidget extends StatelessWidget {
               ),
             ),
           ),
+          8.s,
           SizedBox(
             height: 36.h,
             child: Text(
@@ -63,6 +114,7 @@ class ProductCardWidget extends StatelessWidget {
             ),
           ),
           RichText(
+            overflow: TextOverflow.ellipsis,
             text: TextSpan(
               style: Theme.of(
                 context,
@@ -100,6 +152,7 @@ class ProductCardWidget extends StatelessWidget {
               ],
             ),
           ),
+          8.s,
           RichText(
             text: TextSpan(
               style: Theme.of(
@@ -144,44 +197,6 @@ class ProductCardWidget extends StatelessWidget {
           ),
         ],
       ),
-    ).stackWith(
-      children: [
-        Positioned(
-          top: 4.h,
-          child: Container(
-            padding: EdgeInsets.only(right: 12.w, left: 4.w),
-            width: 156.w,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                OutOfStockBadge(),
-
-                CircularIconButton(
-                  icon: Icons.favorite_border,
-                  // iconPath: 'assets/svgs/heart.svg',
-                  onPressed: () {
-                    // Handle favorite action
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Added to favourite'),
-                        duration: const Duration(seconds: 2),
-                      ),
-                    );
-                  },
-                  iconSize: 16,
-                  size: 24.sp,
-                  backgroundColor: Colors.white,
-                  iconColor: AppColors.iconColor,
-                  elevation: 0,
-                  padding: 0,
-                  blur: true,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
     );
   }
 }
@@ -192,6 +207,7 @@ class OutOfStockBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: EdgeInsets.only(left: 4.w),
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
       decoration: BoxDecoration(
         color: AppColors.primaryColor,
@@ -208,4 +224,3 @@ class OutOfStockBadge extends StatelessWidget {
     );
   }
 }
-

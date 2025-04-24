@@ -38,7 +38,9 @@ class ProductRepositoryIMP implements ProductRepository {
       final cachedProducts = await _localCache.getCachedProducts();
 
       if (cachedProducts.isNotEmpty) {
-        return DataSuccess(cachedProducts); // maybe add metadata: fromCache: true
+        return DataSuccess(
+          cachedProducts,
+        ); // maybe add metadata: fromCache: true
       } else {
         return DataFailed(e);
       }

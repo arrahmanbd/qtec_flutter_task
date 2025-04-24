@@ -4,7 +4,7 @@ import 'package:flutter_addons/flutter_addons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:qtec_flutter_task/src/core/components/shimmer.dart';
 import 'package:qtec_flutter_task/src/features/products/presentation/riverpod/product_provider.dart';
-import 'package:qtec_flutter_task/src/features/products/presentation/widgets/product_grid.dart';
+import 'package:qtec_flutter_task/src/features/products/presentation/widgets/product_card.dart';
 import 'package:qtec_flutter_task/src/shared/theme/app_colors.dart';
 
 class ProductGridPage extends ConsumerStatefulWidget {
@@ -52,12 +52,12 @@ class _ProductGridPageState extends ConsumerState<ProductGridPage> {
         controller: _scrollController,
         slivers: [
           SliverPadding(
-            padding: const EdgeInsets.all(0),
+            padding: 8.py,
             sliver: SliverGrid(
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
                   if (index >= state.products.length) {
-                    return Center(child: 2.s);
+                    return Center();
                   }
 
                   final product = state.products[index];
@@ -68,7 +68,7 @@ class _ProductGridPageState extends ConsumerState<ProductGridPage> {
               ),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
-                childAspectRatio: 2 / 3,
+                childAspectRatio: .58,
                 mainAxisExtent: 264.h,
                 mainAxisSpacing: 24.h,
                 crossAxisSpacing: 16.w,
@@ -79,7 +79,7 @@ class _ProductGridPageState extends ConsumerState<ProductGridPage> {
             const SliverToBoxAdapter(
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 20),
-                child: Center(child: CircularProgressIndicator()),
+                child: Center(child: CupertinoActivityIndicator()),
               ),
             ),
         ],
@@ -100,27 +100,29 @@ class BuildProductSection extends StatelessWidget {
           final state = ref.watch(productProvider);
           final notifier = ref.read(productProvider.notifier);
 
-          if (state.error != null) {
+          //  Error with no products
+          if (state.error != null && state.products.isEmpty) {
             return _ErrorSection(
               message: state.error?.message ?? 'An error occurred',
               onRetry: notifier.fetchInitialProducts,
             );
           }
 
-          if (state.isLoading && state.products.isEmpty) {
-            return Shimmer();
+          //  Show shimmer if loading or refreshing and no products yet
+          if ((state.isLoading || state.isRefreshing) &&
+              state.products.isNotEmpty) {
+            return const Shimmer();
           }
 
-          if (state.products.isEmpty) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                CupertinoActivityIndicator(),
-                const Center(child: Text('No item Found')),
-              ],
-            );
+          //  Show empty state only when done loading and no data
+          if (!state.isLoading &&
+              !state.isRefreshing &&
+              state.products.isEmpty) {
+            return const Center(child: Text('No item Found'));
           }
-          return ProductGridPage();
+
+          //  Normal state
+          return const ProductGridPage();
         },
       ),
     );

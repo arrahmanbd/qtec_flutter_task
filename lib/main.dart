@@ -8,7 +8,7 @@ import 'package:qtec_flutter_task/src/shared/theme/app_theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-   // Initialize Hive
+  // Initialize Hive
   await Hive.initFlutter();
   // Initialize dependencies
   await initializeDependencies();

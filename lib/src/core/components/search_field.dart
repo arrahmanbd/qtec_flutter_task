@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_addons/flutter_addons.dart';
+import 'package:qtec_flutter_task/src/core/resources/assets_link.dart';
 
 import 'package:qtec_flutter_task/src/shared/theme/app_colors.dart';
 
@@ -19,7 +20,7 @@ class CustomSearchField extends StatefulWidget {
   final double? bottomMargin;
 
   const CustomSearchField({
-    Key? key,
+    super.key,
     this.disable = false,
     this.onDisable,
     required this.icon,
@@ -31,10 +32,10 @@ class CustomSearchField extends StatefulWidget {
     this.showTrailing = false,
     this.onLeading,
     this.bottomMargin,
-  }) : super(key: key);
+  });
 
   @override
-  _CustomSearchFieldState createState() => _CustomSearchFieldState();
+  State<CustomSearchField> createState() => _CustomSearchFieldState();
 }
 
 class _CustomSearchFieldState extends State<CustomSearchField> {
@@ -45,9 +46,8 @@ class _CustomSearchFieldState extends State<CustomSearchField> {
     super.initState();
     _focusNode = FocusNode();
 
-    // Auto-focus the field when autofocus is true
     if (widget.autofocus) {
-      Future.delayed(Duration(milliseconds: 100), () {
+      Future.delayed(const Duration(milliseconds: 100), () {
         if (mounted) {
           FocusScope.of(context).requestFocus(_focusNode);
         }
@@ -64,6 +64,7 @@ class _CustomSearchFieldState extends State<CustomSearchField> {
   @override
   Widget build(BuildContext context) {
     final verticalOffset = MediaQuery.of(context).padding.top + 20.h;
+
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       margin: EdgeInsets.only(
@@ -74,14 +75,7 @@ class _CustomSearchFieldState extends State<CustomSearchField> {
           widget.disable
               ? GestureDetector(
                 onTap: () {
-                  if (widget.disable) {
-                    widget.onDisable
-                        ?.call(); // Trigger onDisable callback if the field is disabled
-                  } else {
-                    FocusScope.of(
-                      context,
-                    ).requestFocus(_focusNode); // Request focus on tap
-                  }
+                  widget.onDisable?.call();
                 },
                 child: _buildContent(),
               )
@@ -89,40 +83,37 @@ class _CustomSearchFieldState extends State<CustomSearchField> {
     );
   }
 
-  AbsorbPointer _buildContent() {
+  Widget _buildContent() {
     return AbsorbPointer(
-      absorbing: widget.disable, // Disable interactions if 'disable' is true
+      absorbing: widget.disable,
       child: ConstrainedBox(
         constraints: BoxConstraints(minHeight: 48.h, maxHeight: 48.h),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Expanded(
               child: Container(
-                height: double.infinity, // match the ConstrainedBox height
+                height: double.infinity,
                 decoration: BoxDecoration(
                   color: AppColors.backgroundColor,
                   borderRadius: BorderRadius.circular(8.r),
                   border: Border.all(color: AppColors.outline, width: 1),
                 ),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.center,
-                  spacing: 12.w,
                   children: [
                     Padding(
-                      padding:14.pl,
+                      padding: EdgeInsets.only(left: 2.w),
                       child: CircularIconButton(
-                        onPressed: () {
-                          widget.onLeading?.call();
-                        },
+                        onPressed: widget.onLeading ?? () {},
                         iconPath: widget.icon,
-                        size: 24.sp,
-                        padding: 0,
+                        //size: 24.sp,
+                        padding: 12,
                         iconSize: 24,
                       ),
                     ),
+                    // Padding applied to icon so no need to add spacing here , on left 12+2=14 as design
+                    // SizedBox(width: 12.w),
                     Expanded(
                       child: TextFormField(
                         focusNode: _focusNode,
@@ -133,11 +124,10 @@ class _CustomSearchFieldState extends State<CustomSearchField> {
                             color: AppColors.textSecondary,
                             fontWeight: FontWeight.w400,
                             fontSize: 16.sp,
-                            letterSpacing: 0.5,
+                            letterSpacing: -0.3,
                           ),
                           border: InputBorder.none,
-                          fillColor: const Color.fromARGB(255, 22, 116, 211),
-                          contentPadding: 0.p,
+                          contentPadding: EdgeInsets.zero,
                         ),
                         onChanged: widget.onChanged,
                       ),
@@ -147,14 +137,12 @@ class _CustomSearchFieldState extends State<CustomSearchField> {
               ),
             ),
             if (widget.showTrailing)
-              Container(
-                padding: 8.pl,
+              Padding(
+                padding: EdgeInsets.only(left: 8.w),
                 child: Center(
                   child: CircularIconButton(
-                    onPressed: () {
-                      widget.onTrailing?.call();
-                    },
-                    iconPath: 'assets/svgs/sort.svg',
+                    onPressed: widget.onTrailing ?? () {},
+                    iconPath: Assets.filter,
                     size: 48.sp,
                     padding: 0,
                     iconSize: 48,

@@ -1,10 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:qtec_flutter_task/src/features/products/data/models/product_model.dart';
 import 'package:retrofit/retrofit.dart';
-import 'package:qtec_flutter_task/src/core/constants/app_constants.dart';
+import 'package:qtec_flutter_task/src/core/constants/api_constants.dart';
 
-part 'remote_datasource.g.dart'; 
-
+part 'remote_datasource.g.dart';
 
 @RestApi(baseUrl: baseURL)
 abstract class RemoteDataSource {

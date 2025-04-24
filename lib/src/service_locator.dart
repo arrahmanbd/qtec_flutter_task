@@ -9,7 +9,6 @@ import 'package:qtec_flutter_task/src/features/products/domain/usecase/get_produ
 final sl = GetIt.instance;
 
 Future<void> initializeDependencies() async {
- 
   // Dio
   sl.registerSingleton<Dio>(Dio());
   // Dependencies
@@ -20,6 +19,4 @@ Future<void> initializeDependencies() async {
 
   //UseCases
   sl.registerSingleton<GetProductUsecase>(GetProductUsecase(sl()));
-
- 
 }

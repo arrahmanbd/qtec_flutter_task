@@ -1,27 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_addons/flutter_addons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:qtec_flutter_task/src/core/components/circle_icon.dart';
 import 'package:qtec_flutter_task/src/core/components/search_field.dart';
+import 'package:qtec_flutter_task/src/core/resources/assets_link.dart';
 import 'package:qtec_flutter_task/src/features/products/presentation/riverpod/product_provider.dart';
-import 'package:qtec_flutter_task/src/features/products/presentation/riverpod/product_state.dart';
-import 'package:qtec_flutter_task/src/features/products/presentation/widgets/product_grid.dart';
 import 'package:qtec_flutter_task/src/features/products/presentation/widgets/product_section.dart';
 import 'package:qtec_flutter_task/src/shared/theme/app_colors.dart';
 import 'package:qtec_flutter_task/src/shared/utils/product_filter_utils.dart';
 
-class SearchPage extends StatelessWidget {
+class SearchPage extends ConsumerWidget {
   const SearchPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            _buildSearchBar(context),
-            _buildResultCount(),
-            Expanded(child: BuildProductSection()),
-          ],
+  Widget build(BuildContext context, WidgetRef ref) {
+    final notifier = ref.read(productProvider.notifier);
+    return PopScope(
+      onPopInvokedWithResult: (x, y) {
+        notifier.clearFilters();
+      },
+      child: Scaffold(
+        body: SafeArea(
+          child: Column(
+            children: [
+              _buildSearchBar(context),
+              _buildResultCount(),
+              Expanded(child: BuildProductSection()),
+            ],
+          ),
         ),
       ),
     );
@@ -40,7 +46,7 @@ class SearchPage extends StatelessWidget {
         final notifier = ref.read(productProvider.notifier);
 
         return CustomSearchField(
-          icon: 'assets/svgs/back.svg',
+          icon: Assets.back,
           type: TextInputType.text,
           hintText: 'Search Anything...',
           onChanged: notifier.search,
@@ -79,42 +85,46 @@ class SearchPage extends StatelessWidget {
       },
     );
   }
+}
 
-  
+Future<void> _showSortBySheet(BuildContext context) async {
+  await showModalBottomSheet(
+    context: context,
+    isScrollControlled: false,
+    backgroundColor: Colors.white,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.zero),
+    ),
+    builder: (_) => const _SortBySheetContent(),
+  );
+}
 
-  Future<void> _showSortBySheet(BuildContext context) async {
-    await showModalBottomSheet(
-      context: context,
-      isScrollControlled: false,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.zero),
-      ),
-      builder: (_) {
-        return SizedBox(
-          height: 370,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: EdgeInsets.only(
-                  top: 24.h,
-                  left: 16.w,
-                  right: 16.w,
-                  bottom: 16.h,
-                ),
-                child: _buildSortHeader(context),
-              ),
+class _SortBySheetContent extends StatelessWidget {
+  const _SortBySheetContent();
 
-              Expanded(child: _buildSortOptions()),
-            ],
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 370.h,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: 16.w,
+            ).copyWith(top: 24.h, bottom: 16.h),
+            child: _SortHeader(),
           ),
-        );
-      },
+          const Expanded(child: _SortOptions()),
+        ],
+      ),
     );
   }
+}
 
-  Widget _buildSortHeader(BuildContext context) {
+class _SortHeader extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -126,39 +136,62 @@ class SearchPage extends StatelessWidget {
             color: AppColors.textPrimary,
           ),
         ),
-        IconButton(
-          icon: const Icon(Icons.close),
+        CircularIconButton(
+          iconPath: Assets.cross,
+          iconSize: 24,
           onPressed: () => Navigator.of(context).pop(),
         ),
       ],
     );
   }
+}
 
-  Widget _buildSortOptions() {
+class _SortOptions extends StatelessWidget {
+  const _SortOptions();
+
+  @override
+  Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, _) {
         final notifier = ref.read(productProvider.notifier);
 
         return ListView(
           children: [
-            ListTile(
-              title: const Text('Price - High to Low'),
+            _SortOptionTile(
+              label: 'Price - High to Low',
               onTap: () => notifier.sort(SortOrder.priceHighToLow),
             ),
-            ListTile(
-              title: const Text('Price - Low to High'),
+            _SortOptionTile(
+              label: 'Price - Low to High',
               onTap: () => notifier.sort(SortOrder.priceLowToHigh),
             ),
-            ListTile(
-              title: const Text('Reset'),
-              onTap: () {
-                //notifier.resetFilters();
-                Navigator.of(context).pop();
-              },
+            _SortOptionTile(
+              label: 'Name - A-Z',
+              onTap: () => notifier.sort(SortOrder.nameAZ),
+            ),
+            _SortOptionTile(
+              label: 'Name - Z-A',
+              onTap: () => notifier.sort(SortOrder.nameZA),
+            ),
+            _SortOptionTile(
+              label: 'Reset',
+              onTap: () => Navigator.of(context).pop(),
             ),
           ],
         );
       },
     );
+  }
+}
+
+class _SortOptionTile extends StatelessWidget {
+  final String label;
+  final VoidCallback onTap;
+
+  const _SortOptionTile({required this.label, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(title: Text(label), onTap: onTap);
   }
 }
