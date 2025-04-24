@@ -83,7 +83,7 @@ This is a professionally structured Flutter application developed as part of a p
 
 ## 📢 Download Link
 
-> 🔗 [Download App](https://github.com/arrahmanbd/qtec_flutter_task/releases/download/release/app-release.apk)
+> 🔗 [Download App](https://github.com/arrahmanbd/qtec_flutter_task/releases/download/released/app-release.apk)
 
 ## 📃 License1
 
