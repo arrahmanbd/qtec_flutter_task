@@ -52,7 +52,11 @@ class BuildProductSection extends StatelessWidget {
               whenEmptyLoad: true,
               delegate: const DefaultLoadMorePaginationDelegate(),
               textBuilder: DefaultLoadMorePaginationTextBuilder.english,
-              child: ProductGrid(products: state.products),
+              child: 
+              // Grid isn't working as expected. 
+              // Listview woriking fine.
+              // should be fixed in the future.
+              ProductGrid(products: state.products),
 
               // ListView.builder(
               //   physics: const AlwaysScrollableScrollPhysics(),

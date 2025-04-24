@@ -48,8 +48,7 @@ class SearchPage extends StatelessWidget {
           showTrailing: true,
           bottomMargin: 8.h,
           onLeading: () {
-            // notifier.clearSearch();
-            // notifier.resetFilters();
+            notifier.clearFilters();
             Navigator.of(context).pop();
           },
           onTrailing: () => _showSortBySheet(context),
