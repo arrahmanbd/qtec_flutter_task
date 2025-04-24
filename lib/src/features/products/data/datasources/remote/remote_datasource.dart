@@ -5,6 +5,15 @@ import 'package:qtec_flutter_task/src/core/constants/api_constants.dart';
 
 part 'remote_datasource.g.dart';
 
+
+final dio = Dio(BaseOptions(
+  baseUrl: baseURL,
+  connectTimeout: const Duration(seconds: 10), // Timeout to connect to server
+  receiveTimeout: const Duration(seconds: 10), // Timeout for receiving data
+  sendTimeout: const Duration(seconds: 10),    // Timeout for sending request
+));
+
+
 @RestApi(baseUrl: baseURL)
 abstract class RemoteDataSource {
   factory RemoteDataSource(Dio dio, {String baseUrl}) = _RemoteDataSource;

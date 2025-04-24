@@ -118,6 +118,12 @@ class _CustomSearchFieldState extends State<CustomSearchField> {
                       child: TextFormField(
                         focusNode: _focusNode,
                         keyboardType: widget.type,
+                        style: TextStyle(
+                          color: AppColors.textPrimary,
+                          fontWeight: FontWeight.w400,
+                          fontSize: 16.sp,
+                          letterSpacing: -0.3,
+                        ),
                         decoration: InputDecoration(
                           hintText: widget.hintText,
                           hintStyle: TextStyle(

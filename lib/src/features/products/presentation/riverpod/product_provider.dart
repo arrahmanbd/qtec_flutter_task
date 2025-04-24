@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_addons/flutter_addons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:qtec_flutter_task/src/core/error/failure.dart';
 import 'package:qtec_flutter_task/src/core/resources/data_state.dart';
 import 'package:qtec_flutter_task/src/features/products/domain/entities/product.dart';
 import 'package:qtec_flutter_task/src/features/products/domain/usecase/get_product_usecase.dart';
@@ -21,70 +22,83 @@ class ProductNotifier extends StateNotifier<ProductState> {
   List<Product> _allProducts = [];
   SortOrder _currentSort = SortOrder.priceLowToHigh;
   String _currentQuery = '';
-
+  bool get isSearching => _currentQuery.isNotEmpty;
   ProductNotifier(this.getProductUsecase) : super(const ProductState()) {
     fetchInitialProducts();
   }
 
-  // Initial fetch of products
   Future<void> fetchInitialProducts() async {
     state = state.copyWith(isLoading: true, error: null);
-    _page = 0; // Reset to page 0 when fetching initial products.
+    _page = 0;
     _allProducts.clear();
 
     try {
       final result = await getProductUsecase();
+
       if (result is DataSuccess && result.data != null) {
         _allProducts = result.data!;
         _page = 1;
-        _applyFilters();
-      } else {
-        state = state.copyWith(isLoading: false, error: result.error);
+
+        /// If data fetch is successful, clear error regardless of content
+        state = state.copyWith(error: null);
+
+        _applyFilters(); // This will also update `isempty`
+      } else if (result is DataFailed) {
+        state = state.copyWith(
+          isLoading: false,
+          error: AppFailure.fromDio(result.error!),
+        );
       }
     } catch (e) {
-      state = state.copyWith(isLoading: false, error: e as DioException);
+      state = state.copyWith(
+        isLoading: false,
+        error:
+            e is DioException
+                ? AppFailure.fromDio(e)
+                : const AppFailure(message: 'Unexpected error'),
+      );
     }
   }
 
-  // Load more products for pagination
   Future<bool> loadMore() async {
     if (state.isLoadingMore || state.isFinished) return true;
     state = state.copyWith(isLoadingMore: true);
-    await Future.delayed(
-      const Duration(milliseconds: 800),
-    ); // Simulating network delay
-    // Increment the page to load the next set of products
+
+    await Future.delayed(const Duration(milliseconds: 800));
     _page++;
     dbug('Load more products for page $_page');
     _applyFilters();
+
     return false;
   }
 
-  // Apply filters and pagination to the products list
+
+  ///  Recommendation: I should  use Filtering Usecase for query and sorting
+  ///  Due to time constraints, I am using a utility function
+  ///  to filter and sort the data in memory.
+  ///  This is not efficient for large datasets and should be replaced
   void _applyFilters() {
     var filtered = ProductFilterUtils.search(_allProducts, _currentQuery);
     var sorted = ProductFilterUtils.sort(filtered, _currentSort);
-    // Paginate based on the current page and page size
     var paginated = sorted.take(_page * _pageSize).toList();
+
     state = state.copyWith(
       products: paginated,
       isLoading: false,
       isRefreshing: false,
       isLoadingMore: false,
-      isempty: false,
-      isFinished:
-          paginated.length >= sorted.length, // Check if all products are loaded
+      isempty: paginated.isEmpty,
+      isFinished: paginated.length >= sorted.length,
+      // Only clear error if we have products to show
+      error: paginated.isNotEmpty ? null : state.error,
     );
   }
 
-  // Refresh the product list
   Future<void> refresh() async {
     state = state.copyWith(
       isRefreshing: true,
-      error: null, // optional, clear error on refresh
       isLoading: false,
       isLoadingMore: false,
-      // Remove `isempty: true`, let _applyFilters decide this later
     );
 
     await Future.delayed(const Duration(milliseconds: 800));
@@ -92,23 +106,23 @@ class ProductNotifier extends StateNotifier<ProductState> {
     _page = 0;
     _allProducts.clear();
 
-    await fetchInitialProducts(); // already calls _applyFilters
-    clearFilters();
+    await fetchInitialProducts(); // This handles filters too
+
+    _applyFilters();
   }
 
-  // Search functionality
   void search(String query) {
     _currentQuery = query;
+    state = state.copyWith(error: null);
     _applyFilters();
   }
 
-  // Sort functionality
   void sort(SortOrder order) {
     _currentSort = order;
+    state = state.copyWith(error: null);
     _applyFilters();
   }
 
-  // Clear filters
   void clearFilters() {
     _currentQuery = '';
     _currentSort = SortOrder.idAsc;

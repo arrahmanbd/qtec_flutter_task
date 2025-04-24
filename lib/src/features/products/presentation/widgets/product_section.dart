@@ -100,28 +100,30 @@ class BuildProductSection extends StatelessWidget {
           final state = ref.watch(productProvider);
           final notifier = ref.read(productProvider.notifier);
 
-          //  Error with no products
-          if (state.error != null && state.products.isEmpty) {
-            return _ErrorSection(
-              message: state.error?.message ?? 'An error occurred',
-              onRetry: notifier.fetchInitialProducts,
-            );
-          }
+          final isLoading = state.isLoading || state.isRefreshing;
+          final isEmptySearch = state.products.isEmpty && notifier.isSearching;
+          final isEmptyData = state.products.isEmpty && !notifier.isSearching;
+          final hasError = state.error != null && !state.isRefreshing;
 
-          //  Show shimmer if loading or refreshing and no products yet
-          if ((state.isLoading || state.isRefreshing) &&
-              state.products.isNotEmpty) {
+          // 1. Loading shimmer on first load or refresh
+          if (isLoading && state.products.isEmpty) {
             return const Shimmer();
           }
 
-          //  Show empty state only when done loading and no data
-          if (!state.isLoading &&
-              !state.isRefreshing &&
-              state.products.isEmpty) {
-            return const Center(child: Text('No item Found'));
+          // 2. Show error only if not searching, no data, and error exists
+          if (hasError && isEmptyData) {
+            return _ErrorSection(
+              message: state.error?.message ?? 'An error occurred',
+              onRetry: notifier.refresh,
+            );
           }
 
-          //  Normal state
+          // 3. Show "No item found" if search yields no result (but no error)
+          if (isEmptySearch && !hasError) {
+            return const Center(child: Text('No item found'));
+          }
+
+          // 4. Show products
           return const ProductGridPage();
         },
       ),
@@ -129,14 +131,14 @@ class BuildProductSection extends StatelessWidget {
   }
 }
 
-class _ErrorSection extends StatelessWidget {
+class _ErrorSection extends ConsumerWidget {
   final String message;
   final VoidCallback onRetry;
 
   const _ErrorSection({required this.message, required this.onRetry});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -151,7 +153,9 @@ class _ErrorSection extends StatelessWidget {
             style: TextButton.styleFrom(
               backgroundColor: AppColors.primaryColor,
             ),
-            onPressed: onRetry,
+            onPressed: () {
+              ref.read(productProvider.notifier).refresh();
+            },
             child: const Text('Retry', style: TextStyle(color: Colors.white)),
           ),
         ],

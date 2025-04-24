@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
+import 'package:qtec_flutter_task/src/core/error/failure.dart';
 
 import 'package:qtec_flutter_task/src/features/products/domain/entities/product.dart';
 
@@ -11,7 +12,8 @@ class ProductState extends Equatable {
   final bool isRefreshing;
   final bool isFinished;
   final bool isempty;
-  final DioException? error;
+  final AppFailure? error;
+
 
   const ProductState({
     this.products = const [],
@@ -30,7 +32,7 @@ class ProductState extends Equatable {
     bool? isRefreshing,
     bool? isFinished,
     bool? isempty,
-    DioException? error,
+    AppFailure? error,
   }) {
     return ProductState(
       products: products ?? this.products,
