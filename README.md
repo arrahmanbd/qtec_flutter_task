@@ -53,29 +53,30 @@ This is a professionally structured Flutter application developed as part of a p
 - **Hive** for local storage
 - **Dio** for networking
 - **flutter_svg** for optimized assets
-- **Responsive UI** using `flutter_screenutil`
+- **Responsive UI** using `flutter_screenutil` but base only.
 
 ---
 
 ## 📦 Project Structure (Clean Architecture)
 
-```
-lib/
-├── core/
-├── data/
-│   ├── datasources/
-│   ├── models/
-│   └── repositories/
-├── domain/
-│   ├── entities/
-│   ├── repository/
-│   └── usecases/
-├── presentation/
-│   ├── pages/
-│   ├── providers/
-│   └── widgets/
-└── main.dart
-```
+# lib
+
+* [src/](./lib/src)
+  * [core/](./lib/src/core)
+    * [components/](./lib/src/core/components)
+    * [constants/](./lib/src/core/constants)
+    * [error/](./lib/src/core/error)
+    * [resources/](./lib/src/core/resources)
+    * [routes/](./lib/src/core/routes)
+    * [usecase/](./lib/src/core/usecase)
+  * [features/](./lib/src/features)
+    * [products/](./lib/src/features/products)
+  * [shared/](./lib/src/shared)
+    * [global/](./lib/src/shared/global)
+    * [theme/](./lib/src/shared/theme)
+    * [utils/](./lib/src/shared/utils)
+  * [service_locator.dart](./lib/src/service_locator.dart)
+* [main.dart](./lib/main.dart)
 
 
 
@@ -84,7 +85,7 @@ lib/
 
 > 🔗 [Download App](https://github.com/arrahmanbd/qtec_flutter_task/releases/download/release/app-release.apk)
 
-## 📃 License
+## 📃 License1
 
 This project is developed for educational and professional demonstration purposes. 
 
